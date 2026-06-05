@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://ewves84ia34r"]
+
+[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://messer.glb" id="1_v5ewp"]
+
+[node name="messer" unique_id=874536127 instance=ExtResource("1_v5ewp")]
+
+[node name="Cube" parent="." index="0" unique_id=1562257924]
+transform = Transform3D(1, 0, 0, 0, 0.8232322, 0, 0, 0, 1, 0, 0, 0)

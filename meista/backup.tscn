@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://db5xe3ksq2wuc"]
+
+[ext_resource type="PackedScene" path="res://knife.tscn" id="1_ebn3a"]
+
+[node name="Node3D" type="Node3D" unique_id=815135386]
+
+[node name="knife" parent="." unique_id=450388142 instance=ExtResource("1_ebn3a")]
+transform = Transform3D(-0.0149918385, 0, 0.99988765, 0, 1, 0, -0.99988765, 0, -0.0149918385, 0, 12.319668, 0)
+metadata/_edit_group_ = true
+
+[node name="dreh" type="Node3D" parent="knife" unique_id=1054233586]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="knife/dreh" unique_id=1136633681]

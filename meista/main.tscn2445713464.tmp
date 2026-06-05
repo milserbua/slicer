@@ -1,0 +1,113 @@
+[gd_scene format=3 uid="uid://bvkpl5hhvd6qr"]
+
+[ext_resource type="Script" uid="uid://ch8y7w0oqiito" path="res://tester.gd" id="1_ig7tw"]
+[ext_resource type="Script" uid="uid://brry7hamvd73g" path="res://platformspawner.gd" id="2_0xm2m"]
+[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://messer.glb" id="2_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://platform.tscn" id="3_h2yge"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_ig7tw"]
+sky_material = SubResource("ProceduralSkyMaterial_7dm0k")
+
+[sub_resource type="Environment" id="Environment_0xm2m"]
+background_mode = 2
+sky = SubResource("Sky_ig7tw")
+tonemap_mode = 2
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ig7tw"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_color = Color(1, 0, 0, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dm0k"]
+material = SubResource("StandardMaterial3D_1bvp3")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_0xm2m"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+albedo_color = Color(1, 1, 0.28235295, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1bvp3"]
+material = SubResource("StandardMaterial3D_h2yge")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1bvp3"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1bvp3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_1bvp3"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_lquwl"]
+
+[node name="Main" type="Node3D" unique_id=1291383684]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1938360544]
+environment = SubResource("Environment_0xm2m")
+
+[node name="Boden" type="StaticBody3D" parent="." unique_id=1603761370 groups=["deadly"]]
+transform = Transform3D(1077.5519, 0, 36.39474, 0, 1.4066312, 0, -467728.16, 0, 0.08384618, 0, -4.464924, 2519.0566)
+physics_material_override = SubResource("PhysicsMaterial_ig7tw")
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boden" unique_id=569079722]
+mesh = SubResource("BoxMesh_7dm0k")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boden" unique_id=1541600279]
+shape = SubResource("BoxShape3D_ig7tw")
+
+[node name="start" type="StaticBody3D" parent="." unique_id=623866838]
+transform = Transform3D(-0.1771092, 0, 3.5509377, 0, 1.0358139, 0, -25.560467, 0, -0.024604546, 0, 5.487133, 0)
+physics_material_override = SubResource("PhysicsMaterial_0xm2m")
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="start" unique_id=1223691201]
+mesh = SubResource("BoxMesh_1bvp3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="start" unique_id=1107895956]
+shape = SubResource("BoxShape3D_1bvp3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=810439386]
+
+[node name="Tester" type="CharacterBody3D" parent="." unique_id=1311344294]
+transform = Transform3D(0.048257034, 0, -0.99883497, 0, 1, 0, 0.99883497, 0, 0.048257034, 0, 8.787717, 0.008384585)
+script = ExtResource("1_ig7tw")
+metadata/_edit_group_ = true
+
+[node name="Visual" type="Node3D" parent="Tester" unique_id=1752304612]
+transform = Transform3D(1.0030131, 0, 0, 0, 1, 0, 0, 0, 0.7990462, 0, 0, 0)
+metadata/_edit_group_ = true
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Tester/Visual" unique_id=671857141]
+transform = Transform3D(0.029264994, 0, -0.9995716, 0, 0.99999994, 0, 0.9995717, 0, 0.029264998, 0, 0, 0)
+
+[node name="messer" parent="Tester/Visual/MeshInstance3D" unique_id=874536127 instance=ExtResource("2_1bvp3")]
+
+[node name="Camera3D" type="Camera3D" parent="Tester" unique_id=1380760136]
+transform = Transform3D(-0.9891064, 0.064409725, -0.13236366, 0.0074699577, 0.91999453, 0.39185992, 0.14701343, 0.38660243, -0.9104535, 0.04834666, 2.6052952, -8.714807)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tester" unique_id=755389549]
+transform = Transform3D(1, 0, 0, 0, 1.0826064, 0, 0, 0, 1, -0.088545725, 1.2436657, -0.0881152)
+shape = SubResource("CapsuleShape3D_1bvp3")
+
+[node name="Platformspawner" type="Node3D" parent="." unique_id=1819647880 node_paths=PackedStringArray("player")]
+script = ExtResource("2_0xm2m")
+platform_scene = ExtResource("3_h2yge")
+player = NodePath("../Tester")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=868468337]
+
+[node name="con" type="VBoxContainer" parent="CanvasLayer" unique_id=534095667]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318905]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_1bvp3")
+
+[node name="HighscoreLabel" type="Label" parent="CanvasLayer/con" unique_id=1127724093]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_lquwl")
