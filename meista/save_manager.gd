@@ -14,7 +14,10 @@ var highscores = {
 var player_stats = {
 	"total_platforms": 0,
 	"total_games": 0,
-	"favorite_difficulty": "normal"
+	"favorite_difficulty": "normal",
+	"coins": 0,
+	"current_skin": "default",
+	"owned_skins": ["default"]
 }
 
 func _ready():
@@ -55,4 +58,25 @@ func get_highscore(difficulty: String) -> int:
 func update_stats(platforms: int):
 	player_stats["total_platforms"] += platforms
 	player_stats["total_games"] += 1
+	save_game_data()
+
+func get_coins() -> int:
+	return player_stats.get("coins", 0)
+
+func save_coins(amount: int):
+	player_stats["coins"] = amount
+	save_game_data()
+
+func get_current_skin() -> String:
+	return player_stats.get("current_skin", "default")
+
+func save_current_skin(skin_name: String):
+	player_stats["current_skin"] = skin_name
+	save_game_data()
+
+func get_owned_skins() -> Array:
+	return player_stats.get("owned_skins", ["default"])
+
+func save_owned_skins(skins: Array):
+	player_stats["owned_skins"] = skins
 	save_game_data()
