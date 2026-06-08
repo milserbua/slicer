@@ -47,58 +47,49 @@ var knife_skins = {
 	}
 }
 
-var save_manager: SaveManager
 var current_skin = "default"
 var player_coins = 0
+var skin_changed = Signal()
 
 func _ready():
 	add_to_group("shop_manager")
-	save_manager = get_tree().get_first_node_in_group("save_manager")
-	load_shop_data()
 
-func load_shop_data():
-	# Load from save manager if exists
-	if save_manager:
-		player_coins = save_manager.get_coins()
-		current_skin = save_manager.get_current_skin()
-		var owned_skins = save_manager.get_owned_skins()
-		for skin in owned_skins:
-			if skin in knife_skins:
-				knife_skins[skin]["owned"] = true
-
-func buy_skin(skin_name: String) -> bool:
-	if skin_name not in knife_skins:
+func buy_skin(skin_id: String) -> bool:
+	if skin_id not in knife_skins:
+		print("❌ Skin not found: %s" % skin_id)
 		return false
 	
-	var skin = knife_skins[skin_name]
+	var skin = knife_skins[skin_id]
 	
-	# Already owned
+	# Already owned - just switch to it
 	if skin["owned"]:
-		set_current_skin(skin_name)
-		return true
+		return set_current_skin(skin_id)
 	
 	# Not enough coins
 	if player_coins < skin["price"]:
+		print("❌ Not enough coins: need %d, have %d" % [skin["price"], player_coins])
 		return false
 	
 	# Purchase
 	player_coins -= skin["price"]
 	skin["owned"] = true
-	set_current_skin(skin_name)
-	save_shop_data()
+	print("✅ Purchased %s for %d coins! Coins left: %d" % [skin["name"], skin["price"], player_coins])
+	set_current_skin(skin_id)
 	return true
 
-func set_current_skin(skin_name: String) -> bool:
-	if skin_name not in knife_skins or not knife_skins[skin_name]["owned"]:
+func set_current_skin(skin_id: String) -> bool:
+	if skin_id not in knife_skins or not knife_skins[skin_id]["owned"]:
+		print("❌ Cannot set skin - not owned: %s" % skin_id)
 		return false
 	
-	current_skin = skin_name
-	save_shop_data()
+	current_skin = skin_id
+	print("✅ Knife skin changed to: %s" % knife_skins[skin_id]["name"])
+	skin_changed.emit()
 	return true
 
 func add_coins(amount: int):
 	player_coins += amount
-	save_shop_data()
+	print("💰 Coins added: %d (Total: %d)" % [amount, player_coins])
 
 func get_current_skin_data() -> Dictionary:
 	return knife_skins[current_skin]
@@ -106,12 +97,8 @@ func get_current_skin_data() -> Dictionary:
 func get_all_skins() -> Dictionary:
 	return knife_skins
 
-func save_shop_data():
-	if save_manager:
-		save_manager.save_coins(player_coins)
-		save_manager.save_current_skin(current_skin)
-		var owned_skins = []
-		for skin_name in knife_skins:
-			if knife_skins[skin_name]["owned"]:
-				owned_skins.append(skin_name)
-		save_manager.save_owned_skins(owned_skins)
+func get_skin_by_id(skin_id: String) -> Dictionary:
+	return knife_skins.get(skin_id, {})
+
+func is_skin_owned(skin_id: String) -> bool:
+	return knife_skins.get(skin_id, {}).get("owned", false)
