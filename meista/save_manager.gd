@@ -1,9 +1,7 @@
 extends Node
 
 class_name SaveManager
-
 const SAVE_FILE = "user://slicer_save.json"
-
 var highscores = {
 	"easy": 0,
 	"normal": 0,
