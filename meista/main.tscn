@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://brry7hamvd73g" path="res://platformspawner.gd" id="2_0xm2m"]
 [ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://messer.glb" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://platform.tscn" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://c8y3w0s5i1ko" path="res://meista/shop_ui.gd" id="4_shop"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -37,6 +38,14 @@ size = Vector3(1, 2.4682617, 1)
 [sub_resource type="LabelSettings" id="LabelSettings_level"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_coins"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBox_button"]
+bg_color = Color(0.2, 0.2, 0.2, 0.9)
+border_color = Color(1, 1, 1, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 
 [node name="Main" type="Node3D" unique_id=1291383684]
 
@@ -101,3 +110,24 @@ label_settings = SubResource("LabelSettings_level")
 [node name="CoinsLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318907]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_coins")
+
+[node name="ShopButton" type="Button" parent="CanvasLayer" unique_id=1558318908]
+anchor_left = 1.0
+anchor_top = 0.0
+anchor_right = 1.0
+anchor_bottom = 0.0
+offset_left = -80.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = 50.0
+text = "🏠 Shop"
+theme_override_styles/normal = SubResource("StyleBox_button")
+
+[node name="ShopUI" type="Control" parent="CanvasLayer" unique_id=1558318909]
+visible = false
+layout_mode = 1
+anchors_left = 0.0
+anchors_top = 0.0
+anchors_right = 1.0
+anchors_bottom = 1.0
+script = ExtResource("4_shop")
