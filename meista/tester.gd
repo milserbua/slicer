@@ -10,8 +10,8 @@ const JUMP_VELOCITY = 20.0
 const GRAVITY = 20.0
 const JUMP_DAMPING = 0.15
 const MIN_SPIN_SPEED = 0.5
-const COINS_PER_PLATFORM = 5
-const SCORE_MULTIPLIER = 10
+const COINS_PER_DISTANCE = 1  # Coins pro Y-Einheit Abstand
+const SCORE_PER_DISTANCE = 0.5  # Score pro Y-Einheit Abstand
 
 var jumps_left = 4
 var score = 0
@@ -24,6 +24,7 @@ var stuck = false
 var platforms_passed = 0
 var combo = 0
 var combo_multiplier = 1.0
+var highest_distance = 0.0
 
 var shop_manager: Node
 var audio_manager: Node
@@ -102,13 +103,20 @@ func _physics_process(delta):
 			combo += 1
 			combo_multiplier = 1.0 + (combo * 0.1)  # +10% per combo
 			
-			# Calculate score with combo multiplier
-			var base_score = SCORE_MULTIPLIER * combo_multiplier
-			score += int(base_score)
+			# Calculate distance from spawn position
+			var current_distance = spawn_position.y - global_position.y
+			var distance_gained = current_distance - highest_distance
 			
-			# Earn coins
-			var coins = int(COINS_PER_PLATFORM * combo_multiplier)
-			coins_earned += coins
+			if distance_gained > 0:
+				highest_distance = current_distance
+				
+				# Calculate score based on distance with combo multiplier
+				var base_score = int(distance_gained * SCORE_PER_DISTANCE * combo_multiplier)
+				score += base_score
+				
+				# Earn coins based on distance with combo multiplier
+				var coins = int(distance_gained * COINS_PER_DISTANCE * combo_multiplier)
+				coins_earned += coins
 			
 			play_cut_sound()
 			create_cut_effect()
@@ -167,6 +175,7 @@ func die():
 	platforms_passed = 0
 	combo = 0
 	combo_multiplier = 1.0
+	highest_distance = 0.0
 	score_label.text = "Score: 0"
 	coins_label.text = "Coins: 0"
 
