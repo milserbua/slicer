@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://ch8y7w0oqiito" path="res://meista/tester.gd" id="1_ig7tw"]
 [ext_resource type="Script" uid="uid://brry7hamvd73g" path="res://meista/platformspawner.gd" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://messer.glb" id="2_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://platform.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://meista/messer.glb" id="2_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://meista/platform.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://c8y3w0s5i1ko" path="res://meista/shop_ui.gd" id="4_shop"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
