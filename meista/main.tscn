@@ -34,6 +34,10 @@ size = Vector3(1, 2.4682617, 1)
 
 [sub_resource type="LabelSettings" id="LabelSettings_lquwl"]
 
+[sub_resource type="LabelSettings" id="LabelSettings_level"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_coins"]
+
 [node name="Main" type="Node3D" unique_id=1291383684]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1938360544]
@@ -89,3 +93,11 @@ label_settings = SubResource("LabelSettings_1bvp3")
 [node name="HighscoreLabel" type="Label" parent="CanvasLayer/con" unique_id=1127724093]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_lquwl")
+
+[node name="LevelLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318906]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_level")
+
+[node name="CoinsLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318907]
+layout_mode = 2
+label_settings = SubResource("LabelSettings_coins")
