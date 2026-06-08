@@ -1,7 +1,6 @@
 extends CharacterBody3D
 
 @onready var visual = $Visual
-@onready var score_label = $"../CanvasLayer/con/ScoreLabel"
 @onready var highscore_label = $"../CanvasLayer/con/HighscoreLabel"
 @onready var coins_label = $"../CanvasLayer/con/CoinsLabel"
 @onready var distance_label = $"../CanvasLayer/con/DistanceLabel"
@@ -11,12 +10,9 @@ const JUMP_VELOCITY = 20.0
 const GRAVITY = 20.0
 const JUMP_DAMPING = 0.15
 const MIN_SPIN_SPEED = 0.5
-const COINS_PER_DISTANCE = 1.0  # Coins pro Y-Einheit Abstand
-const SCORE_PER_UNIT = 5.0  # Basis Score pro Einheit Höhe
+const COINS_PER_DISTANCE = 1.0
 
 var jumps_left = 4
-var score = 0
-var highscore = 0
 var coins_earned = 0
 var spawn_position : Vector3
 var dead = false
@@ -26,7 +22,7 @@ var platforms_passed = 0
 var combo = 0
 var combo_multiplier = 1.0
 var highest_y = 0.0
-var current_distance = 0.0
+var best_distance = 0.0
 
 var shop_manager: Node
 var audio_manager: Node
@@ -34,8 +30,8 @@ var audio_manager: Node
 func _ready():
 	spawn_position = global_position
 	highest_y = spawn_position.y
-	score_label.text = "Score: 0"
-	highscore_label.text = "Highscore: 0"
+	best_distance = 0.0
+	highscore_label.text = "Best: 0m"
 	coins_label.text = "💰 0"
 	distance_label.text = "📍 0m"
 	
@@ -105,27 +101,19 @@ func _physics_process(delta):
 			spin_speed = 0.0
 			platforms_passed += 1
 			combo += 1
-			combo_multiplier = 1.0 + (combo * 0.15)  # +15% per combo
+			combo_multiplier = 1.0 + (combo * 0.15)
 			
 			# Calculate distance traveled (Y-axis)
 			var y_distance = abs(spawn_position.y - global_position.y)
 			
-			# Only add points if we progressed higher
+			# Only add coins if we progressed higher
 			if y_distance > highest_y:
 				var distance_gained = y_distance - highest_y
 				highest_y = y_distance
 				
-				# Calculate score based on height gained
-				var base_score = int(distance_gained * SCORE_PER_UNIT)
-				var combo_bonus = int(base_score * (combo_multiplier - 1.0))
-				var total_score_gained = base_score + combo_bonus
-				score += total_score_gained
-				
-				# Earn coins based on height gained and combo
+				# Earn coins based on distance gained and combo
 				var coins = int(distance_gained * COINS_PER_DISTANCE * combo_multiplier)
 				coins_earned += coins
-				
-				current_distance = distance_gained
 			
 			play_cut_sound()
 			create_cut_effect()
@@ -145,9 +133,9 @@ func _physics_process(delta):
 			die()
 
 func update_ui():
-	score_label.text = "Score: " + str(score) + " (x%.2f)" % combo_multiplier
+	var current_distance = abs(spawn_position.y - global_position.y)
+	distance_label.text = "📍 %.1fm" % current_distance
 	coins_label.text = "💰 " + str(coins_earned)
-	distance_label.text = "📍 %.1fm" % (abs(spawn_position.y - global_position.y))
 
 func play_jump_sound():
 	if audio_manager and audio_manager.has_method("play_sound"):
@@ -172,24 +160,24 @@ func die():
 	
 	var game_manager = get_tree().get_first_node_in_group("game_manager")
 	if game_manager:
-		game_manager.save_score(score, platforms_passed)
+		game_manager.save_distance(platforms_passed, int(abs(spawn_position.y - global_position.y)))
 	
 	# Add coins to shop manager
 	if shop_manager:
 		shop_manager.add_coins(coins_earned)
 
-	if score > highscore:
-		highscore = score
+	# Update best distance
+	var current_distance = int(abs(spawn_position.y - global_position.y))
+	if current_distance > best_distance:
+		best_distance = current_distance
 
-	highscore_label.text = "Highscore: " + str(highscore)
+	highscore_label.text = "Best: %dm" % best_distance
 
-	score = 0
 	coins_earned = 0
 	platforms_passed = 0
 	combo = 0
 	combo_multiplier = 1.0
 	highest_y = spawn_position.y
-	score_label.text = "Score: 0"
 	coins_label.text = "💰 0"
 
 	global_position = spawn_position
