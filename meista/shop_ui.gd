@@ -2,22 +2,22 @@ extends Control
 
 class_name ShopUI
 
-@onready var shop_button = get_parent().get_node("ShopButton")
 var is_shop_open = false
 var shop_manager: ShopManager
+var shop_button: Button
 
 func _ready():
-	shop_button.pressed.connect(_on_shop_button_pressed)
+	# Warte bis Shop Button verfügbar ist
+	await get_tree().process_frame
 	
-	# Get shop manager from game manager
-	var game_manager = get_tree().root.get_child(0)
-	if game_manager and game_manager.has_meta("shop_manager"):
-		shop_manager = game_manager.get_meta("shop_manager")
-	else:
-		# Try to find it in groups
-		var managers = get_tree().get_nodes_in_group("shop_manager")
-		if managers.size() > 0:
-			shop_manager = managers[0]
+	shop_button = get_parent().get_node("ShopButton")
+	if shop_button:
+		shop_button.pressed.connect(_on_shop_button_pressed)
+	
+	# Get shop manager from groups
+	var managers = get_tree().get_nodes_in_group("shop_manager")
+	if managers.size() > 0:
+		shop_manager = managers[0]
 	
 	# Create shop UI
 	_create_shop_ui()
@@ -72,10 +72,19 @@ func _create_shop_ui():
 	skin_vbox.name = "SkinsContainer"
 	scroll.add_child(skin_vbox)
 	
-	# Skins list (placeholder - will be populated)
-	for i in range(6):
+	# Skins list
+	var skins = [
+		{"name": "Classic", "price": 0, "color": Color(0.7, 0.7, 0.7)},
+		{"name": "Gold Rush", "price": 500, "color": Color(1, 0.84, 0)},
+		{"name": "Crimson", "price": 750, "color": Color(0.85, 0.1, 0.1)},
+		{"name": "Icy", "price": 600, "color": Color(0.3, 0.8, 1)},
+		{"name": "Shadow", "price": 800, "color": Color(0.2, 0.2, 0.2)},
+		{"name": "Rainbow", "price": 1200, "color": Color(1, 0.2, 0.8)}
+	]
+	
+	for i in range(skins.size()):
 		var skin_button = Button.new()
-		skin_button.text = "Skin %d" % i
+		skin_button.text = "%s - %d💰" % [skins[i]["name"], skins[i]["price"]]
 		skin_button.custom_minimum_size = Vector2(0, 50)
 		skin_button.pressed.connect(func(): _on_skin_selected(i))
 		skin_vbox.add_child(skin_button)
@@ -101,7 +110,7 @@ func _update_shop_display():
 	if not shop_manager:
 		return
 	
-	var coins_label = get_node("ShopPanel/VBoxContainer/CoinsDisplayLabel")
+	var coins_label = get_node_or_null("ShopPanel/VBoxContainer/CoinsDisplayLabel")
 	if coins_label:
 		coins_label.text = "💰 Coins: %d" % shop_manager.player_coins
 
