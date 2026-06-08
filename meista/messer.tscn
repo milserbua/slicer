@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ewves84ia34r"]
 
-[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://messer.glb" id="1_v5ewp"]
+[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://meista/messer.glb" id="1_v5ewp"]
 
 [node name="messer" unique_id=874536127 instance=ExtResource("1_v5ewp")]
 
