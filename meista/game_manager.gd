@@ -6,12 +6,14 @@ class_name GameManager
 @onready var score_label = $CanvasLayer/con/ScoreLabel
 @onready var highscore_label = $CanvasLayer/con/HighscoreLabel
 @onready var level_label = $CanvasLayer/con/LevelLabel
+@onready var coins_label = $CanvasLayer/con/CoinsLabel
 @onready var spawner = $Platformspawner
 
 enum Difficulty { EASY, NORMAL, HARD }
 
 var current_difficulty = Difficulty.NORMAL
 var save_manager: SaveManager
+var shop_manager: ShopManager
 var audio_manager: AudioManager
 var input_manager: Node
 
@@ -43,11 +45,16 @@ func _ready():
 	save_manager = SaveManager.new()
 	add_child(save_manager)
 	
+	shop_manager = ShopManager.new()
+	add_child(shop_manager)
+	add_to_group("shop_manager", shop_manager)
+	
 	audio_manager = AudioManager.new()
 	add_child(audio_manager)
 	
-	input_manager = load("res://meista/input_manager.gd").new()
-	add_child(input_manager)
+	input_manager = load("res://meista/input_manager.gd").new() if ResourceLoader.exists("res://meista/input_manager.gd") else null
+	if input_manager:
+		add_child(input_manager)
 	
 	apply_difficulty_settings()
 	update_ui()
@@ -74,6 +81,9 @@ func update_ui():
 		var difficulty_str = Difficulty.keys()[current_difficulty].to_lower()
 		var hs = save_manager.get_highscore(difficulty_str)
 		highscore_label.text = "Highscore: " + str(hs)
+	
+	if shop_manager and coins_label:
+		coins_label.text = "💰 " + str(shop_manager.player_coins)
 
 func toggle_pause():
 	pause_menu_shown = !pause_menu_shown
