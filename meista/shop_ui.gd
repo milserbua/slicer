@@ -21,17 +21,17 @@ func _ready():
 	_create_shop_ui()
 
 func _create_shop_ui():
-	# Main Panel - Centered
+	# Main Panel - Properly centered
 	var panel = PanelContainer.new()
 	panel.name = "ShopPanel"
 	panel.anchor_left = 0.5
 	panel.anchor_top = 0.5
 	panel.anchor_right = 0.5
 	panel.anchor_bottom = 0.5
-	panel.offset_left = -400
-	panel.offset_top = -350
-	panel.offset_right = 400
-	panel.offset_bottom = 350
+	panel.offset_left = -300  # Half of width (600)
+	panel.offset_top = -280   # Half of height (560)
+	panel.offset_right = 300
+	panel.offset_bottom = 280
 	add_child(panel)
 	
 	var style = StyleBoxFlat.new()
@@ -49,15 +49,14 @@ func _create_shop_ui():
 	
 	var vbox = VBoxContainer.new()
 	vbox.name = "VBoxContainer"
-	vbox.add_theme_constant_override("separation", 15)
+	vbox.add_theme_constant_override("separation", 12)
 	panel.add_child(vbox)
 	
 	# Title
 	var title = Label.new()
 	title.text = "⚔️ KNIFE SHOP ⚔️"
-	title.add_theme_font_size_override("font_size", 36)
+	title.add_theme_font_size_override("font_size", 32)
 	title.add_theme_color_override("font_color", Color(0.2, 0.9, 1.0))
-	title.add_theme_constant_override("alignment", HORIZONTAL_ALIGNMENT_CENTER)
 	vbox.add_child(title)
 	
 	# Separator
@@ -66,18 +65,18 @@ func _create_shop_ui():
 	
 	# Coins display - Enhanced
 	var coins_container = HBoxContainer.new()
-	coins_container.add_theme_constant_override("separation", 10)
+	coins_container.add_theme_constant_override("separation", 8)
 	coins_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
 	var coins_icon = Label.new()
 	coins_icon.text = "💰"
-	coins_icon.add_theme_font_size_override("font_size", 24)
+	coins_icon.add_theme_font_size_override("font_size", 20)
 	coins_container.add_child(coins_icon)
 	
 	var coins_label = Label.new()
 	coins_label.text = "Coins: 0"
 	coins_label.name = "CoinsDisplayLabel"
-	coins_label.add_theme_font_size_override("font_size", 20)
+	coins_label.add_theme_font_size_override("font_size", 18)
 	coins_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
 	coins_container.add_child(coins_label)
 	vbox.add_child(coins_container)
@@ -88,19 +87,18 @@ func _create_shop_ui():
 	# Skin Category Label
 	var skin_label = Label.new()
 	skin_label.text = "Select Knife Skin:"
-	skin_label.add_theme_font_size_override("font_size", 16)
+	skin_label.add_theme_font_size_override("font_size", 14)
 	skin_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
-	skin_label.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(skin_label)
 	
 	# Scroll for skins
 	var scroll = ScrollContainer.new()
-	scroll.custom_minimum_size = Vector2(0, 280)
+	scroll.custom_minimum_size = Vector2(0, 240)
 	vbox.add_child(scroll)
 	
 	var skin_vbox = VBoxContainer.new()
 	skin_vbox.name = "SkinsContainer"
-	skin_vbox.add_theme_constant_override("separation", 8)
+	skin_vbox.add_theme_constant_override("separation", 6)
 	scroll.add_child(skin_vbox)
 	
 	# Skins data
@@ -115,13 +113,13 @@ func _create_shop_ui():
 	
 	for i in range(skins.size()):
 		var skin_item = HBoxContainer.new()
-		skin_item.add_theme_constant_override("separation", 10)
-		skin_item.custom_minimum_size = Vector2(0, 60)
+		skin_item.add_theme_constant_override("separation", 8)
+		skin_item.custom_minimum_size = Vector2(0, 45)
 		
 		# Color preview
 		var color_box = ColorRect.new()
 		color_box.color = skins[i]["color"]
-		color_box.custom_minimum_size = Vector2(50, 50)
+		color_box.custom_minimum_size = Vector2(40, 40)
 		skin_item.add_child(color_box)
 		
 		# Skin info
@@ -130,7 +128,7 @@ func _create_shop_ui():
 		
 		var skin_name = Label.new()
 		skin_name.text = skins[i]["emoji"] + " " + skins[i]["name"]
-		skin_name.add_theme_font_size_override("font_size", 16)
+		skin_name.add_theme_font_size_override("font_size", 14)
 		skin_name.add_theme_color_override("font_color", Color(1, 1, 1))
 		info_vbox.add_child(skin_name)
 		
@@ -141,7 +139,7 @@ func _create_shop_ui():
 		else:
 			price_label.text = "💰 " + str(skins[i]["price"])
 			price_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
-		price_label.add_theme_font_size_override("font_size", 14)
+		price_label.add_theme_font_size_override("font_size", 12)
 		info_vbox.add_child(price_label)
 		
 		skin_item.add_child(info_vbox)
@@ -149,8 +147,8 @@ func _create_shop_ui():
 		# Select/Buy Button
 		var skin_button = Button.new()
 		skin_button.text = "SELECT" if skins[i]["price"] == 0 else "BUY"
-		skin_button.custom_minimum_size = Vector2(100, 50)
-		skin_button.add_theme_font_size_override("font_size", 14)
+		skin_button.custom_minimum_size = Vector2(85, 40)
+		skin_button.add_theme_font_size_override("font_size", 12)
 		
 		var skin_index = i
 		skin_button.pressed.connect(func(): _on_skin_selected(skin_index, skins[skin_index]))
@@ -164,8 +162,8 @@ func _create_shop_ui():
 	# Close button
 	var close_button = Button.new()
 	close_button.text = "Close Shop (ESC)"
-	close_button.custom_minimum_size = Vector2(0, 50)
-	close_button.add_theme_font_size_override("font_size", 18)
+	close_button.custom_minimum_size = Vector2(0, 40)
+	close_button.add_theme_font_size_override("font_size", 14)
 	var close_style = StyleBoxFlat.new()
 	close_style.bg_color = Color(0.8, 0.2, 0.2)
 	close_style.border_color = Color(1, 1, 1, 0.5)
