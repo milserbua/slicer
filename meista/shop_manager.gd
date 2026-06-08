@@ -51,8 +51,52 @@ var current_skin = "default"
 var player_coins = 0
 var skin_changed = Signal()
 
+# Save file path
+var save_file = "user://slicer_save.json"
+
 func _ready():
 	add_to_group("shop_manager")
+	load_player_data()
+
+func load_player_data():
+	if FileAccess.file_exists(save_file):
+		var file = FileAccess.open(save_file, FileAccess.READ)
+		if file:
+			var data = JSON.parse_string(file.get_as_text())
+			if data:
+				player_coins = data.get("coins", 0)
+				current_skin = data.get("current_skin", "default")
+				
+				# Load owned skins
+				if data.has("owned_skins"):
+					for skin_id in data["owned_skins"]:
+						if skin_id in knife_skins:
+							knife_skins[skin_id]["owned"] = true
+				
+				print("✅ Player data loaded! Coins: %d" % player_coins)
+			else:
+				print("⚠️ Save file corrupted, starting fresh")
+				save_player_data()
+	else:
+		print("📄 No save file found, creating new one")
+		save_player_data()
+
+func save_player_data():
+	var owned_skins = []
+	for skin_id in knife_skins:
+		if knife_skins[skin_id]["owned"]:
+			owned_skins.append(skin_id)
+	
+	var data = {
+		"coins": player_coins,
+		"current_skin": current_skin,
+		"owned_skins": owned_skins
+	}
+	
+	var file = FileAccess.open(save_file, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data))
+		print("💾 Player data saved! Coins: %d" % player_coins)
 
 func buy_skin(skin_id: String) -> bool:
 	if skin_id not in knife_skins:
@@ -74,6 +118,7 @@ func buy_skin(skin_id: String) -> bool:
 	player_coins -= skin["price"]
 	skin["owned"] = true
 	print("✅ Purchased %s for %d coins! Coins left: %d" % [skin["name"], skin["price"], player_coins])
+	save_player_data()
 	set_current_skin(skin_id)
 	return true
 
@@ -84,12 +129,14 @@ func set_current_skin(skin_id: String) -> bool:
 	
 	current_skin = skin_id
 	print("✅ Knife skin changed to: %s" % knife_skins[skin_id]["name"])
+	save_player_data()
 	skin_changed.emit()
 	return true
 
 func add_coins(amount: int):
 	player_coins += amount
 	print("💰 Coins added: %d (Total: %d)" % [amount, player_coins])
+	save_player_data()
 
 func get_current_skin_data() -> Dictionary:
 	return knife_skins[current_skin]
