@@ -3,7 +3,7 @@ extends Control
 class_name ShopUI
 
 var is_shop_open = false
-var shop_manager: ShopManager
+var shop_manager: Node
 var shop_button: Button
 
 func _ready():
@@ -117,7 +117,6 @@ func _update_shop_display():
 func _on_skin_selected(skin_index: int):
 	print("Skin %d selected" % skin_index)
 	if shop_manager:
-		# TODO: Implement skin purchase logic
 		pass
 
 func _on_close_shop():
