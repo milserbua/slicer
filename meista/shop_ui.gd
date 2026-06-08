@@ -38,8 +38,10 @@ func _create_shop_ui():
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0.1, 0.1, 0.1, 0.95)
 	style.border_color = Color(1, 1, 1, 0.5)
-	style.set_border_enabled(true)
-	style.set_border_width_all(2)
+	style.border_width_left = 2
+	style.border_width_top = 2
+	style.border_width_right = 2
+	style.border_width_bottom = 2
 	panel.add_theme_stylebox_override("panel", style)
 	
 	var vbox = VBoxContainer.new()
@@ -86,7 +88,9 @@ func _create_shop_ui():
 		var skin_button = Button.new()
 		skin_button.text = "%s - %d💰" % [skins[i]["name"], skins[i]["price"]]
 		skin_button.custom_minimum_size = Vector2(0, 50)
-		skin_button.pressed.connect(func(): _on_skin_selected(i))
+		# Fix: Capture index properly to avoid closure issues
+		var skin_index = i
+		skin_button.pressed.connect(func(): _on_skin_selected(skin_index))
 		skin_vbox.add_child(skin_button)
 	
 	# Close button
@@ -117,7 +121,7 @@ func _update_shop_display():
 func _on_skin_selected(skin_index: int):
 	print("Skin %d selected" % skin_index)
 	if shop_manager:
-		pass
+		shop_manager.set_current_skin(["default", "gold", "crimson", "ice", "shadow", "rainbow"][skin_index])
 
 func _on_close_shop():
 	is_shop_open = false
