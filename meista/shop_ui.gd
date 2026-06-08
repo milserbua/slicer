@@ -21,17 +21,17 @@ func _ready():
 	_create_shop_ui()
 
 func _create_shop_ui():
-	# Main Panel
+	# Main Panel - Centered
 	var panel = PanelContainer.new()
 	panel.name = "ShopPanel"
 	panel.anchor_left = 0.5
 	panel.anchor_top = 0.5
 	panel.anchor_right = 0.5
 	panel.anchor_bottom = 0.5
-	panel.offset_left = -350
-	panel.offset_top = -300
-	panel.offset_right = 350
-	panel.offset_bottom = 300
+	panel.offset_left = -400
+	panel.offset_top = -350
+	panel.offset_right = 400
+	panel.offset_bottom = 350
 	add_child(panel)
 	
 	var style = StyleBoxFlat.new()
@@ -57,6 +57,7 @@ func _create_shop_ui():
 	title.text = "⚔️ KNIFE SHOP ⚔️"
 	title.add_theme_font_size_override("font_size", 36)
 	title.add_theme_color_override("font_color", Color(0.2, 0.9, 1.0))
+	title.add_theme_constant_override("alignment", HORIZONTAL_ALIGNMENT_CENTER)
 	vbox.add_child(title)
 	
 	# Separator
@@ -66,6 +67,7 @@ func _create_shop_ui():
 	# Coins display - Enhanced
 	var coins_container = HBoxContainer.new()
 	coins_container.add_theme_constant_override("separation", 10)
+	coins_container.alignment = BoxContainer.ALIGNMENT_CENTER
 	
 	var coins_icon = Label.new()
 	coins_icon.text = "💰"
@@ -88,6 +90,7 @@ func _create_shop_ui():
 	skin_label.text = "Select Knife Skin:"
 	skin_label.add_theme_font_size_override("font_size", 16)
 	skin_label.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	skin_label.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	vbox.add_child(skin_label)
 	
 	# Scroll for skins
@@ -113,12 +116,12 @@ func _create_shop_ui():
 	for i in range(skins.size()):
 		var skin_item = HBoxContainer.new()
 		skin_item.add_theme_constant_override("separation", 10)
-		skin_item.custom_minimum_size = Vector2(0, 50)
+		skin_item.custom_minimum_size = Vector2(0, 60)
 		
 		# Color preview
 		var color_box = ColorRect.new()
 		color_box.color = skins[i]["color"]
-		color_box.custom_minimum_size = Vector2(40, 40)
+		color_box.custom_minimum_size = Vector2(50, 50)
 		skin_item.add_child(color_box)
 		
 		# Skin info
@@ -127,7 +130,7 @@ func _create_shop_ui():
 		
 		var skin_name = Label.new()
 		skin_name.text = skins[i]["emoji"] + " " + skins[i]["name"]
-		skin_name.add_theme_font_size_override("font_size", 14)
+		skin_name.add_theme_font_size_override("font_size", 16)
 		skin_name.add_theme_color_override("font_color", Color(1, 1, 1))
 		info_vbox.add_child(skin_name)
 		
@@ -138,7 +141,7 @@ func _create_shop_ui():
 		else:
 			price_label.text = "💰 " + str(skins[i]["price"])
 			price_label.add_theme_color_override("font_color", Color(1.0, 0.84, 0.0))
-		price_label.add_theme_font_size_override("font_size", 12)
+		price_label.add_theme_font_size_override("font_size", 14)
 		info_vbox.add_child(price_label)
 		
 		skin_item.add_child(info_vbox)
@@ -146,8 +149,8 @@ func _create_shop_ui():
 		# Select/Buy Button
 		var skin_button = Button.new()
 		skin_button.text = "SELECT" if skins[i]["price"] == 0 else "BUY"
-		skin_button.custom_minimum_size = Vector2(80, 40)
-		skin_button.add_theme_font_size_override("font_size", 12)
+		skin_button.custom_minimum_size = Vector2(100, 50)
+		skin_button.add_theme_font_size_override("font_size", 14)
 		
 		var skin_index = i
 		skin_button.pressed.connect(func(): _on_skin_selected(skin_index, skins[skin_index]))
@@ -160,12 +163,12 @@ func _create_shop_ui():
 	
 	# Close button
 	var close_button = Button.new()
-	close_button.text = "Close Shop"
-	close_button.custom_minimum_size = Vector2(0, 45)
-	close_button.add_theme_font_size_override("font_size", 16)
+	close_button.text = "Close Shop (ESC)"
+	close_button.custom_minimum_size = Vector2(0, 50)
+	close_button.add_theme_font_size_override("font_size", 18)
 	var close_style = StyleBoxFlat.new()
-	close_style.bg_color = Color(0.2, 0.2, 0.4)
-	close_style.border_color = Color(1, 1, 1, 0.3)
+	close_style.bg_color = Color(0.8, 0.2, 0.2)
+	close_style.border_color = Color(1, 1, 1, 0.5)
 	close_style.border_width_left = 2
 	close_style.border_width_top = 2
 	close_style.border_width_right = 2
@@ -184,6 +187,12 @@ func _on_shop_button_pressed():
 	else:
 		get_tree().paused = false
 
+func _input(event):
+	if event is InputEventKey and event.pressed:
+		if event.keycode == KEY_ESCAPE and is_shop_open:
+			_on_close_shop()
+			get_tree().root.set_input_as_handled()
+
 func _update_shop_display():
 	if not shop_manager:
 		return
@@ -200,6 +209,7 @@ func _on_skin_selected(skin_index: int, skin_data: Dictionary):
 		
 		if result:
 			print("✅ Skin changed to: %s" % skin_data["name"])
+			_update_shop_display()
 		else:
 			var current_coins = shop_manager.player_coins
 			var price = skin_data["price"]
