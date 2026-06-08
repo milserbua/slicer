@@ -5,6 +5,9 @@
 [ext_resource type="PackedScene" path="res://meista/messer.tscn" id="2_1bvp3"]
 [ext_resource type="PackedScene" path="res://meista/platform.tscn" id="3_h2yge"]
 [ext_resource type="Script" path="res://meista/shop_ui.gd" id="4_shop"]
+[ext_resource type="Script" path="res://meista/game_manager.gd" id="5_game_mgr"]
+[ext_resource type="Script" path="res://meista/shop_manager.gd" id="6_shop_mgr"]
+[ext_resource type="Script" path="res://meista/audio_manager.gd" id="7_audio_mgr"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -48,6 +51,7 @@ border_width_right = 2
 border_width_bottom = 2
 
 [node name="Main" type="Node3D"]
+script = ExtResource("5_game_mgr")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_0xm2m")
@@ -131,3 +135,9 @@ anchors_top = 0.0
 anchors_right = 1.0
 anchors_bottom = 1.0
 script = ExtResource("4_shop")
+
+[node name="ShopManager" type="Node" parent="."]
+script = ExtResource("6_shop_mgr")
+
+[node name="AudioManager" type="Node" parent="."]
+script = ExtResource("7_audio_mgr")
