@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://bvkpl5hhvd6qr"]
 
-[ext_resource type="Script" uid="uid://ch8y7w0oqiito" path="res://meista/tester.gd" id="1_ig7tw"]
-[ext_resource type="Script" uid="uid://brry7hamvd73g" path="res://meista/platformspawner.gd" id="2_0xm2m"]
-[ext_resource type="PackedScene" uid="uid://ip2e1h8heoa1" path="res://meista/messer.glb" id="2_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://meista/platform.tscn" id="3_h2yge"]
-[ext_resource type="Script" uid="uid://c8y3w0s5i1ko" path="res://meista/shop_ui.gd" id="4_shop"]
+[ext_resource type="Script" path="res://meista/tester.gd" id="1_ig7tw"]
+[ext_resource type="Script" path="res://meista/platformspawner.gd" id="2_0xm2m"]
+[ext_resource type="PackedScene" path="res://meista/messer.tscn" id="2_1bvp3"]
+[ext_resource type="PackedScene" path="res://meista/platform.tscn" id="3_h2yge"]
+[ext_resource type="Script" path="res://meista/shop_ui.gd" id="4_shop"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7dm0k"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -47,71 +47,71 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
-[node name="Main" type="Node3D" unique_id=1291383684]
+[node name="Main" type="Node3D"]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1938360544]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_0xm2m")
 
-[node name="Boden" type="StaticBody3D" parent="." unique_id=1603761370 groups=["deadly"]]
+[node name="Boden" type="StaticBody3D" parent="." groups=["deadly"]]
 transform = Transform3D(1077.5519, 0, 36.39474, 0, 1.4066312, 0, -467728.16, 0, 0.08384618, 0, -4.464924, 2519.0566)
 physics_material_override = SubResource("PhysicsMaterial_ig7tw")
 metadata/_edit_group_ = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Boden" unique_id=569079722]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Boden"]
 mesh = SubResource("BoxMesh_7dm0k")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Boden" unique_id=1541600279]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Boden"]
 shape = SubResource("BoxShape3D_ig7tw")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=810439386]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 
-[node name="Tester" type="CharacterBody3D" parent="." unique_id=1311344294]
+[node name="Tester" type="CharacterBody3D" parent="."]
 transform = Transform3D(0.043444645, -0.004159873, -0.99904716, 0.026832573, 0.99963546, -0.0029954745, 0.9986955, -0.026676867, 0.043540426, 0, 8.787717, 0.008384585)
 script = ExtResource("1_ig7tw")
 metadata/_edit_group_ = true
 
-[node name="Visual" type="Node3D" parent="Tester" unique_id=1752304612]
+[node name="Visual" type="Node3D" parent="Tester"]
 transform = Transform3D(1.0030131, 0, 0, 0, 1, 0, 0, 0, 0.7990462, 0, 0, 0)
 metadata/_edit_group_ = true
 
-[node name="messer" parent="Tester/Visual" unique_id=874536127 instance=ExtResource("2_1bvp3")]
+[node name="messer" parent="Tester/Visual" instance=ExtResource("2_1bvp3")]
 transform = Transform3D(0.029264994, 0, -0.99957156, 0, 0.9999999, 0, 0.9995716, 0, 0.02926499, 0, 0, 0)
 
-[node name="Camera3D" type="Camera3D" parent="Tester" unique_id=1380760136]
+[node name="Camera3D" type="Camera3D" parent="Tester"]
 transform = Transform3D(-0.9891064, 0.064409725, -0.13236366, 0.0074699577, 0.91999453, 0.39185992, 0.14701343, 0.38660243, -0.9104535, 0.04834666, 2.6052952, -8.714807)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Tester" unique_id=628352554]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tester"]
 transform = Transform3D(1.0000024, -1.0617077e-07, 0, -3.7811697e-07, 1, 3.4924597e-10, 1.4901161e-08, 2.9336661e-08, 1, -1.4901161e-08, 0.83862877, 1.8626451e-09)
 shape = SubResource("BoxShape3D_1bvp3")
 
-[node name="Platformspawner" type="Node3D" parent="." unique_id=1819647880 node_paths=PackedStringArray("player")]
+[node name="Platformspawner" type="Node3D" parent="." node_paths=PackedStringArray("player")]
 script = ExtResource("2_0xm2m")
 platform_scene = ExtResource("3_h2yge")
 player = NodePath("../Tester")
 
-[node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=868468337]
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="con" type="VBoxContainer" parent="CanvasLayer" unique_id=534095667]
+[node name="con" type="VBoxContainer" parent="CanvasLayer"]
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ScoreLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318905]
+[node name="ScoreLabel" type="Label" parent="CanvasLayer/con"]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_1bvp3")
 
-[node name="HighscoreLabel" type="Label" parent="CanvasLayer/con" unique_id=1127724093]
+[node name="HighscoreLabel" type="Label" parent="CanvasLayer/con"]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_lquwl")
 
-[node name="LevelLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318906]
+[node name="LevelLabel" type="Label" parent="CanvasLayer/con"]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_level")
 
-[node name="CoinsLabel" type="Label" parent="CanvasLayer/con" unique_id=1558318907]
+[node name="CoinsLabel" type="Label" parent="CanvasLayer/con"]
 layout_mode = 2
 label_settings = SubResource("LabelSettings_coins")
 
-[node name="ShopButton" type="Button" parent="CanvasLayer" unique_id=1558318908]
+[node name="ShopButton" type="Button" parent="CanvasLayer"]
 anchor_left = 1.0
 anchor_top = 0.0
 anchor_right = 1.0
@@ -123,7 +123,7 @@ offset_bottom = 50.0
 text = "🏠 Shop"
 theme_override_styles/normal = SubResource("StyleBox_button")
 
-[node name="ShopUI" type="Control" parent="CanvasLayer" unique_id=1558318909]
+[node name="ShopUI" type="Control" parent="CanvasLayer"]
 visible = false
 layout_mode = 1
 anchors_left = 0.0
