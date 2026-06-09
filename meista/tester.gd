@@ -21,7 +21,7 @@ var stuck = false
 var platforms_passed = 0
 var combo = 0
 var combo_multiplier = 1.0
-var highest_y = 0.0
+var highest_z = 0.0
 var best_distance = 0.0
 
 var shop_manager: Node
@@ -29,28 +29,28 @@ var audio_manager: Node
 
 func _ready():
 	spawn_position = global_position
-	highest_y = spawn_position.y
+	highest_z = 0.0
 	best_distance = 0.0
 	highscore_label.text = "Best: 0m"
 	coins_label.text = "💰 0"
 	distance_label.text = "📍 0m"
-	
+
+	await get_tree().process_frame
 	shop_manager = get_tree().get_first_node_in_group("shop_manager")
+	print("FOUND SHOP MANAGER:", shop_manager)
 	audio_manager = get_tree().get_first_node_in_group("audio_manager")
-	
-	# Apply current knife skin
+
 	if shop_manager:
 		apply_knife_skin()
 
 func apply_knife_skin():
 	if not shop_manager:
 		return
-	
+
 	var skin_data = shop_manager.get_current_skin_data()
 	if skin_data and visual:
 		var knife = visual.get_node_or_null("messer")
 		if knife:
-			# Find MeshInstance3D nodes and update material
 			for child in knife.get_children():
 				if child is MeshInstance3D:
 					var mat = StandardMaterial3D.new()
@@ -59,15 +59,12 @@ func apply_knife_skin():
 					child.set_surface_override_material(0, mat)
 
 func _physics_process(delta):
-	# Gravity
 	velocity.y -= GRAVITY * delta
-	
-	# Ground check and reset
+
 	if is_on_floor():
 		jumps_left = 4
 		velocity.z = lerp(velocity.z, 0.0, JUMP_DAMPING)
-	
-	# Jump input
+
 	if Input.is_action_just_pressed("ui_accept") and jumps_left > 0:
 		velocity.y = JUMP_VELOCITY
 		velocity.z -= 4.0
@@ -75,8 +72,7 @@ func _physics_process(delta):
 		stuck = false
 		jumps_left -= 1
 		play_jump_sound()
-	
-	# Smooth spin decay
+
 	if is_on_floor() and stuck:
 		spin_speed = lerp(spin_speed, 0.0, 0.1)
 	else:
@@ -84,10 +80,8 @@ func _physics_process(delta):
 
 	move_and_slide()
 
-	# Smooth visual rotation
 	visual.rotate_z(spin_speed * delta)
 
-	# Landing detection
 	if is_on_floor() and not stuck:
 		var angle = fmod(abs(rad_to_deg(visual.rotation.z)), 360.0)
 		var valid_landing = false
@@ -102,40 +96,45 @@ func _physics_process(delta):
 			platforms_passed += 1
 			combo += 1
 			combo_multiplier = 1.0 + (combo * 0.15)
-			
-			# Calculate distance traveled (Y-axis)
-			var y_distance = abs(spawn_position.y - global_position.y)
-			
-			# Only add coins if we progressed higher
-			if y_distance > highest_y:
-				var distance_gained = y_distance - highest_y
-				highest_y = y_distance
+
+			var z_distance = abs(spawn_position.z - global_position.z)
+
+			if z_distance > highest_z:
+				var distance_gained = z_distance - highest_z
+				highest_z = z_distance
 				
-				# Earn coins based on distance gained and combo
-				var coins = int(distance_gained * COINS_PER_DISTANCE * combo_multiplier)
-				coins_earned += coins
-			
+				var coins = 10* max(1, int(distance_gained * COINS_PER_DISTANCE * combo_multiplier))
+				print("distance=", distance_gained, " coins=", coins)
+				coins_earned 	+= coins
+				if coins > 0:
+					coins_earned += coins
+					if shop_manager:
+						print("shop_manager=", shop_manager)
+						shop_manager.add_coins(coins)
+
 			play_cut_sound()
 			create_cut_effect()
 		else:
-			velocity.y = 0.0
+			velocity.z = 0.0
 			spin_speed *= 1.8
 			combo = 0
 			combo_multiplier = 1.0
 
-	# Update UI every frame
 	update_ui()
-	
-	# Collision detection
+
 	for i in range(get_slide_collision_count()):
 		var collision = get_slide_collision(i)
 		if collision.get_collider().is_in_group("deadly"):
 			die()
 
 func update_ui():
-	var current_distance = abs(spawn_position.y - global_position.y)
+	var current_distance = abs(spawn_position.z - global_position.z)
 	distance_label.text = "📍 %.1fm" % current_distance
-	coins_label.text = "💰 " + str(coins_earned)
+
+	if shop_manager:
+		coins_label.text = "💰 " + str(shop_manager.player_coins)
+	else:
+		coins_label.text = "💰 0"
 
 func play_jump_sound():
 	if audio_manager and audio_manager.has_method("play_sound"):
@@ -155,19 +154,13 @@ func create_cut_effect():
 func die():
 	if dead:
 		return
-
 	dead = true
-	
+
 	var game_manager = get_tree().get_first_node_in_group("game_manager")
 	if game_manager:
 		game_manager.save_distance(platforms_passed, int(abs(spawn_position.y - global_position.y)))
-	
-	# Add coins to shop manager
-	if shop_manager:
-		shop_manager.add_coins(coins_earned)
 
-	# Update best distance
-	var current_distance = int(abs(spawn_position.y - global_position.y))
+	var current_distance = int(abs(spawn_position.z - global_position.z))
 	if current_distance > best_distance:
 		best_distance = current_distance
 
@@ -177,8 +170,7 @@ func die():
 	platforms_passed = 0
 	combo = 0
 	combo_multiplier = 1.0
-	highest_y = spawn_position.y
-	coins_label.text = "💰 0"
+	highest_z = spawn_position.z
 
 	global_position = spawn_position
 	velocity = Vector3.ZERO

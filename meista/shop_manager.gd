@@ -2,6 +2,9 @@ extends Node
 
 class_name ShopManager
 
+signal skin_changed
+signal coins_changed(new_amount)
+
 var knife_skins = {
 	"default": {
 		"name": "Classic",
@@ -49,9 +52,7 @@ var knife_skins = {
 
 var current_skin = "default"
 var player_coins = 0
-var skin_changed = Signal()
 
-# Save file path
 var save_file = "user://slicer_save.json"
 
 func _ready():
@@ -62,7 +63,7 @@ func _ready():
 
 func load_player_data():
 	print("📂 Attempting to load from: %s" % save_file)
-	
+
 	if FileAccess.file_exists(save_file):
 		print("📄 Save file found!")
 		var file = FileAccess.open(save_file, FileAccess.READ)
@@ -70,17 +71,22 @@ func load_player_data():
 			var json_string = file.get_as_text()
 			print("📋 File content: %s" % json_string)
 			var data = JSON.parse_string(json_string)
-			
+
 			if data:
 				player_coins = data.get("coins", 0)
 				current_skin = data.get("current_skin", "default")
-				
-				# Load owned skins
+
 				if data.has("owned_skins"):
 					for skin_id in data["owned_skins"]:
 						if skin_id in knife_skins:
 							knife_skins[skin_id]["owned"] = true
-				
+
+				if current_skin not in knife_skins:
+					current_skin = "default"
+
+				if not knife_skins["default"]["owned"]:
+					knife_skins["default"]["owned"] = true
+
 				print("✅ Loaded! Coins: %d, Skin: %s" % [player_coins, current_skin])
 			else:
 				print("⚠️ JSON parse failed, starting fresh")
@@ -97,26 +103,20 @@ func save_player_data():
 	for skin_id in knife_skins:
 		if knife_skins[skin_id]["owned"]:
 			owned_skins.append(skin_id)
-	
+
 	var data = {
 		"coins": player_coins,
 		"current_skin": current_skin,
 		"owned_skins": owned_skins
 	}
-	
+
 	var json_string = JSON.stringify(data)
 	print("📝 Data to save: %s" % json_string)
-	
+
 	var file = FileAccess.open(save_file, FileAccess.WRITE)
 	if file:
 		file.store_string(json_string)
 		print("✅ Saved successfully! Coins: %d" % player_coins)
-		
-		# Verify save
-		if FileAccess.file_exists(save_file):
-			print("✔️ Save file verified to exist")
-		else:
-			print("❌ Save file not found after writing!")
 	else:
 		print("❌ Failed to open file for writing")
 
@@ -124,31 +124,29 @@ func buy_skin(skin_id: String) -> bool:
 	if skin_id not in knife_skins:
 		print("❌ Skin not found: %s" % skin_id)
 		return false
-	
+
 	var skin = knife_skins[skin_id]
-	
-	# Already owned - just switch to it
+
 	if skin["owned"]:
 		return set_current_skin(skin_id)
-	
-	# Not enough coins
+
 	if player_coins < skin["price"]:
 		print("❌ Not enough coins: need %d, have %d" % [skin["price"], player_coins])
 		return false
-	
-	# Purchase
+
 	player_coins -= skin["price"]
 	skin["owned"] = true
+
 	print("✅ Purchased %s for %d coins! Coins left: %d" % [skin["name"], skin["price"], player_coins])
 	save_player_data()
-	set_current_skin(skin_id)
-	return true
+	coins_changed.emit(player_coins)
+	return set_current_skin(skin_id)
 
 func set_current_skin(skin_id: String) -> bool:
 	if skin_id not in knife_skins or not knife_skins[skin_id]["owned"]:
 		print("❌ Cannot set skin - not owned: %s" % skin_id)
 		return false
-	
+
 	current_skin = skin_id
 	print("✅ Knife skin changed to: %s" % knife_skins[skin_id]["name"])
 	save_player_data()
@@ -156,9 +154,13 @@ func set_current_skin(skin_id: String) -> bool:
 	return true
 
 func add_coins(amount: int):
+	if amount <= 0:
+		return
+
 	player_coins += amount
 	print("💰 Coins added: +%d (Total: %d)" % [amount, player_coins])
 	save_player_data()
+	coins_changed.emit(player_coins)
 
 func get_current_skin_data() -> Dictionary:
 	return knife_skins[current_skin]

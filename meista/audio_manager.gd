@@ -35,7 +35,7 @@ func play_sound(sound_name: String, pitch_variation = 0.1):
 func set_master_volume(value: float):
 	master_volume = clamp(value, 0.0, 1.0)
 	if AudioServer.get_bus_count() > 0:
-		AudioServer.set_bus_volume_db(0, linear2db(master_volume))
+		AudioServer.set_bus_volume_db(0, linear_to_db(master_volume))
 
 func set_effects_volume(value: float):
 	effects_volume = clamp(value, 0.0, 1.0)
