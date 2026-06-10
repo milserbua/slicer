@@ -30,6 +30,8 @@ material = SubResource("StandardMaterial3D_1bvp3")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ig7tw"]
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_272bh"]
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_1bvp3"]
 size = Vector3(1, 2.4682617, 1)
 
@@ -79,6 +81,12 @@ metadata/_edit_group_ = true
 
 [node name="messer" parent="Tester/Visual" unique_id=67626636 instance=ExtResource("2_1bvp3")]
 transform = Transform3D(0.029264994, 0, -0.99957156, 0, 0.9999999, 0, 0.9995716, 0, 0.02926499, 0, 0, 0)
+
+[node name="Area3D" type="Area3D" parent="Tester/Visual/messer" unique_id=2057339224]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Tester/Visual/messer/Area3D" unique_id=1748843019]
+transform = Transform3D(1.022339, 0, -2.6077032e-08, -1.0477379e-09, 1.8197451, -5.5879354e-09, -7.450581e-09, 3.7252903e-09, 0.6301968, -0.030528963, 1.2563238, 0.28535068)
+shape = SubResource("BoxShape3D_272bh")
 
 [node name="Camera3D" type="Camera3D" parent="Tester" unique_id=1659745793]
 transform = Transform3D(-0.9891064, 0.064409725, -0.13236366, 0.0074699577, 0.91999453, 0.39185992, 0.14701343, 0.38660243, -0.9104535, 0.04834666, 2.6052952, -8.714807)

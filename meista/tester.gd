@@ -60,7 +60,6 @@ func apply_knife_skin():
 
 func _physics_process(delta):
 	velocity.y -= GRAVITY * delta
-
 	if is_on_floor():
 		jumps_left = 4
 		velocity.z = lerp(velocity.z, 0.0, JUMP_DAMPING)
@@ -150,6 +149,10 @@ func create_cut_effect():
 	tween.set_ease(Tween.EASE_OUT)
 	tween.tween_property(visual, "scale", Vector3(1.1, 1.1, 1.1), 0.1)
 	tween.tween_property(visual, "scale", Vector3(1.0, 1.0, 1.0), 0.2)
+
+func _on_area_3d_body_entered(body):
+	if body.is_in_group("sliceable"):
+		body.slice()
 
 func die():
 	if dead:
