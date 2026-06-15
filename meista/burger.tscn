@@ -1,12 +1,15 @@
 [gd_scene format=3 uid="uid://cec32blfnwlg5"]
 
-[ext_resource type="PackedScene" uid="uid://ct5vjfmbpn0vc" path="res://Burger.glb" id="1_nkn5y"]
+[ext_resource type="PackedScene" uid="uid://818a5ely6dwp" path="res://Burger.glb" id="1_nkn5y"]
 [ext_resource type="Script" uid="uid://bq02aqj3cck0m" path="res://burger.gd" id="2_5n162"]
 
-[node name="Burger" unique_id=1423626367 instance=ExtResource("1_nkn5y")]
-transform = Transform3D(0.18, 0, 0, 0, 0.16, 0, 0, 0, 0.18, 0, 0, 0)
-script = ExtResource("2_5n162")
-metadata/_edit_group_ = true
+[sub_resource type="BoxShape3D" id="BoxShape3D_5n162"]
 
-[node name="Area3D" type="Area3D" parent="." index="5" unique_id=1961087242]
-transform = Transform3D(391.716, 0, 0, 0, 342.8392, 0, 0, 0, 315.49106, -5.5555553, 0, -5.5555553)
+[node name="Burger" unique_id=2060224326 instance=ExtResource("1_nkn5y")]
+script = ExtResource("2_5n162")
+
+[node name="Area3D" type="Area3D" parent="." index="2" unique_id=821278326]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D" index="0" unique_id=794036405]
+transform = Transform3D(3.1411445, 0, 0, 0, 2.9699392, 0, 0, 0, 3.0905824, -0.11690092, 0.8484726, 0)
+shape = SubResource("BoxShape3D_5n162")

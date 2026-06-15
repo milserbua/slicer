@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://ewves84ia34r" path="res://messer.tscn" id="2_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://b6r36qa0ri70e" path="res://platform.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://2we5qv5ig0px" path="res://shop_ui.gd" id="4_shop"]
+[ext_resource type="PackedScene" uid="uid://cec32blfnwlg5" path="res://burger.tscn" id="6_5vw27"]
 [ext_resource type="Script" uid="uid://cl68nkhtn5gsj" path="res://shop_manager.gd" id="6_shop_mgr"]
 [ext_resource type="Script" uid="uid://kfea6qiyqnmn" path="res://audio_manager.gd" id="7_audio_mgr"]
 
@@ -98,6 +99,7 @@ shape = SubResource("BoxShape3D_1bvp3")
 [node name="Platformspawner" type="Node3D" parent="." unique_id=815240595 node_paths=PackedStringArray("player")]
 script = ExtResource("2_0xm2m")
 platform_scene = ExtResource("3_h2yge")
+burger_scene = ExtResource("6_5vw27")
 player = NodePath("../Tester")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." unique_id=1261760566]

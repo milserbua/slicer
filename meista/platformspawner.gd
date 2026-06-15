@@ -1,6 +1,8 @@
 extends Node3D
 
 @export var platform_scene: PackedScene
+@export var burger_scene: PackedScene
+@export_range(0.0, 1.0) var burger_spawn_chance := 0.35
 @export var player: Node3D
 
 var spawn_z = 0.0
@@ -22,17 +24,32 @@ func _process(delta):
 
 func spawn_platform():
 	var platform = platform_scene.instantiate()
-	
-	# Randomize X position based on difficulty
+
 	var x_variation = randf_range(-1.5, 1.5) * difficulty_multiplier
-	
+
 	platform.position = Vector3(
 		x_variation,
 		randf_range(-0.8, 1.2),
 		spawn_z
 	)
-	
+
 	add_child(platform)
+
+	# -----------------------
+	# Burger zufällig spawnen
+	# -----------------------
+	if burger_scene and randf() < burger_spawn_chance:
+		var burger = burger_scene.instantiate()
+
+		# leicht über der Plattform
+		burger.position = Vector3(
+			0,
+			0.6,
+			0
+		)
+
+		platform.add_child(burger)
+
 	spawn_z -= spawn_distance
 	platforms_spawned += 1
 	

@@ -1,3 +1,4 @@
+# res://tester.gd
 extends CharacterBody3D
 
 @onready var visual = $Visual
@@ -14,7 +15,7 @@ const COINS_PER_DISTANCE = 1.0
 
 var jumps_left = 4
 var coins_earned = 0
-var spawn_position : Vector3
+var spawn_position: Vector3
 var dead = false
 var spin_speed = 0.0
 var stuck = false
@@ -27,7 +28,10 @@ var best_distance = 0.0
 var shop_manager: Node
 var audio_manager: Node
 
+
 func _ready():
+	add_to_group("player")
+
 	spawn_position = global_position
 	highest_z = 0.0
 	best_distance = 0.0
@@ -43,6 +47,7 @@ func _ready():
 	if shop_manager:
 		apply_knife_skin()
 
+
 func apply_knife_skin():
 	if not shop_manager:
 		return
@@ -57,6 +62,7 @@ func apply_knife_skin():
 					mat.albedo_color = skin_data["color"]
 					mat.metallic = 1.0
 					child.set_surface_override_material(0, mat)
+
 
 func _physics_process(delta):
 	velocity.y -= GRAVITY * delta
@@ -101,10 +107,10 @@ func _physics_process(delta):
 			if z_distance > highest_z:
 				var distance_gained = z_distance - highest_z
 				highest_z = z_distance
-				
-				var coins = 10* max(1, int(distance_gained * COINS_PER_DISTANCE * combo_multiplier))
+
+				var coins = 10 * max(1, int(distance_gained * COINS_PER_DISTANCE * combo_multiplier))
 				print("distance=", distance_gained, " coins=", coins)
-				coins_earned 	+= coins
+				coins_earned += coins
 				if coins > 0:
 					coins_earned += coins
 					if shop_manager:
@@ -126,6 +132,7 @@ func _physics_process(delta):
 		if collision.get_collider().is_in_group("deadly"):
 			die()
 
+
 func update_ui():
 	var current_distance = abs(spawn_position.z - global_position.z)
 	distance_label.text = "📍 %.1fm" % current_distance
@@ -135,13 +142,16 @@ func update_ui():
 	else:
 		coins_label.text = "💰 0"
 
+
 func play_jump_sound():
 	if audio_manager and audio_manager.has_method("play_sound"):
 		audio_manager.play_sound("jump")
 
+
 func play_cut_sound():
 	if audio_manager and audio_manager.has_method("play_sound"):
 		audio_manager.play_sound("cut", 0.2)
+
 
 func create_cut_effect():
 	var tween = create_tween()
@@ -150,9 +160,6 @@ func create_cut_effect():
 	tween.tween_property(visual, "scale", Vector3(1.1, 1.1, 1.1), 0.1)
 	tween.tween_property(visual, "scale", Vector3(1.0, 1.0, 1.0), 0.2)
 
-func _on_area_3d_body_entered(body):
-	if body.is_in_group("sliceable"):
-		body.slice()
 
 func die():
 	if dead:
